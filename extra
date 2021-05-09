@@ -33,7 +33,18 @@ sudo mongod --port 2002 --dbpath /System/Volumes/Data/data/rs2 --replSet --aakas
 
 ///////
 Sharding Demo
+replication
+Auto incerement
 Index(index,text,geo)
 Mongodb tools
 cloud
 user management
+
+/////////////////
+
+Setup
+CRUD >
+ Create 
+ Read   (simple,projection,sort,limit,condition)
+ Update (update & upsert)
+ Delete
