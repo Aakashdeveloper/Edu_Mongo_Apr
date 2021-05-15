@@ -1,0 +1,165 @@
+db.shop.insert({"name":"Bakers","city":"Mumbai"})
+db.shop.insert({"name":"Veg","city":"Pune"})
+db.shop.insert({"name":"Chicken","city":"London"})
+
+db.shop.insert({_id:1,"name":"Street Food","city":"NewYork"})
+db.shop.insert({_id:2,"name":"Flowers","city":"Amsterdam"})
+
+609f2814777f266d390db6cc
+609f281c777f266d390db6cd
+609f2822777f266d390db6ce
+
+12 byte
+
+4 byte timestamp
+5 byte random value
+3 byte incrementing
+
+
+/////////////////
+db.products.insert({_id:"itemid",seqValue:0})
+
+function getSequenceNetValue(seqName){
+    var seqDoc = db.shop.findAndModify({
+        query:{_id: seqName},
+        update:{$inc:{seqValue:1}},
+        new:true
+    })
+
+    return seqDoc.seqValue
+}
+
+
+db.products.insert({
+    _id:getSequenceNetValue("itemid"),
+    name:"Table",
+    cost:8891
+})
+
+db.products.insert({
+    _id:getSequenceNetValue("itemid"),
+    name:"Laptop",
+    cost:38785
+})
+
+db.products.insert({
+    _id:getSequenceNetValue("itemid"),
+    name:"Mobile",
+    cost:18785
+})
+
+
+db.products.insert({
+    _id:getSequenceNetValue("itemid1"),
+    name:"Mobile",
+    cost:18785
+})
+
+
+db.shop.remove({})
+
+
+
+db.shop.insert({_id:"shopid",seqValue:105})
+db.shop.insert({
+                _id:getSequenceNetValue("shopid"),
+                "name":"Bakers",
+                "city":"Mumbai"
+            })
+db.shop.insert({ _id:getSequenceNetValue("shopid"),"name":"Veg","city":"Pune"})
+db.shop.insert({ _id:getSequenceNetValue("shopid"),"name":"Chicken","city":"London"})
+
+////////////////////////
+update > put/patch
+upsert > update + insert 
+
+db.shop.update(
+    {_id:101},
+    {
+        $set:{
+            "min_price":201,
+            "city":"Kochi"
+        }
+    }
+)
+
+
+db.shop.update(
+    {_id:105},
+    {
+        $set:{
+           "name":"Mobile"
+        }
+    },
+    {
+        upsert:true,
+        multi:true
+    }
+)
+
+
+db.shop.insert({ _id:getSequenceNetValue("shopid"),"name":"Laptop","city":"Delhi"})
+
+{ "_id" : 105, "city" : "Kochi", "min_price" : 201, "name" : "Mobile" }
+db.shop.insert({ _id:getSequenceNetValue("shopid"),"name":"Gift Shop","city":"Lucknow"})
+
+
+db.shop.update(
+    {_id:107},
+    {
+       $mul:{"min_price":2}
+    }
+)
+
+$divide
+$inc 
+
+
+db.shop.update(
+    {_id:106},
+    {
+        $unset:{
+           "min_price":""
+        }
+    }
+)
+
+db.shop.update(
+    {_id:101},
+    {
+        $set:{
+           "min_price":""
+        }
+    }
+)
+
+db.student.insert({
+    "_id":1,
+    "name":"Ankit",
+    "login_data":new Date(Date.now())
+})
+
+{ "_id" : 1, "name" : "Ankit", "login_data" : ISODate("2021-05-15T02:35:56.280Z") }
+
+
+db.order.insert({_id:1,"ordercity":"London","OrderDateTime":ISODate("2020-05-20")});
+db.order.insert({_id:2,"ordercity":"Nice","OrderDateTime":ISODate("2020-05-14")});
+db.order.insert({_id:3,"ordercity":"Paris","OrderDateTime":ISODate("2020-05-11")});
+db.order.insert({_id:4,"ordercity":"Amsterdam","OrderDateTime":ISODate("2020-05-26")});
+
+
+db.order.find({"OrderDateTime":{$gte:ISODate("2020-05-10"),$lte:ISODate("2020-05-15")}}).pretty()
+
+
+/////////////////////
+db.order.remove({})
+
+db.order.remove({_id:2})
+
+///delete collection
+db.order.drop()
+
+
+//delete database
+use dbname
+db.dropDatabase()
