@@ -163,3 +163,148 @@ db.order.drop()
 //delete database
 use dbname
 db.dropDatabase()
+
+
+////////////////////////
+
+db.orders.insert([
+   { "_id" : 1, "item" : "almonds", "price" : 12, "quantity" : 2 },
+   { "_id" : 2, "item" : "pecans", "price" : 20, "quantity" : 1 },
+   { "_id" : 3  }
+])
+
+db.inventory.insert([
+   { "_id" : 1, "sku" : "almonds", description: "product 1", "instock" : 120 },
+   { "_id" : 2, "sku" : "bread", description: "product 2", "instock" : 80 },
+   { "_id" : 3, "sku" : "cashews", description: "product 3", "instock" : 60 },
+   { "_id" : 4, "sku" : "pecans", description: "product 4", "instock" : 70 },
+   { "_id" : 5, "sku": null, description: "Incomplete" },
+   { "_id" : 6 }
+])
+
+
+db.inventory.insert([
+   { "_id" : 7, "sku" : "almonds", description: "product 7", "instock" : 10 }
+])
+
+db.orders.aggregate([
+    {
+        $lookup:{
+            from:'inventory',
+            localField:"item",
+            foreignField:"sku",
+            as:"combine_data"
+        }
+    }
+]).pretty()
+
+
+
+db.classes.insert( [ 
+    { _id: 1, title: "Reading is ...", enrollmentlist: [ "giraffe2", "pandabear", "artie" ], days: ["M", "W", "F"] }, 
+    { _id: 2, title: "But Writing ...", enrollmentlist: [ "giraffe1", "artie" ], days: ["T", "F"] } ])
+
+db.members.insert( [
+     { _id: 1, name: "artie", joined: new Date("2016-05-01"), status: "A" }, 
+     { _id: 2, name: "giraffe", joined: new Date("2017-05-01"), status: "D" }, 
+     { _id: 3, name: "giraffe1", joined: new Date("2017-10-01"), status: "A" }, 
+     { _id: 4, name: "panda", joined: new Date("2018-10-11"), status: "A" }, 
+     { _id: 5, name: "pandabear", joined: new Date("2018-12-01"), status: "A" }, 
+     { _id: 6, name: "giraffe2", joined: new Date("2018-12-01"), status: "D" } 
+])
+
+db.classes.aggregate([
+    {
+        $lookup:{
+            from:'members',
+            localField:"enrollmentlist",
+            foreignField:"name",
+            as:"student_info"
+        }
+    }
+]).pretty()
+
+
+db.sales.insertMany([ 
+     { "_id" : 1, "item" : "abc", "price" : NumberDecimal("10"), "quantity" : NumberInt("2"), "date" : ISODate("2014-03-01T08:00:00Z") }, 
+     { "_id" : 2, "item" : "jkl", "price" : NumberDecimal("20"), "quantity" : NumberInt("1"), "date" : ISODate("2014-03-01T09:00:00Z") }, 
+     { "_id" : 3, "item" : "xyz", "price" : NumberDecimal("5"), "quantity" : NumberInt( "10"), "date" : ISODate("2014-03-15T09:00:00Z") },
+     { "_id" : 4, "item" : "xyz", "price" : NumberDecimal("5"), "quantity" : NumberInt("20") , "date" : ISODate("2014-04-04T11:21:39.736Z") }, 
+     { "_id" : 5, "item" : "abc", "price" : NumberDecimal("10"), "quantity" : NumberInt("10") , "date" : ISODate("2014-04-04T21:23:13.331Z") },
+     { "_id" : 6, "item" : "def", "price" : NumberDecimal("7.5"), "quantity": NumberInt("5" ) , "date" : ISODate("2015-06-04T05:08:13Z") },
+     { "_id" : 7, "item" : "def", "price" : NumberDecimal("7.5"), "quantity": NumberInt("10") , "date" : ISODate("2015-09-10T08:43:00Z") },
+     { "_id" : 8, "item" : "abc", "price" : NumberDecimal("10"), "quantity" : NumberInt("5" ) , "date" : ISODate("2016-02-06T20:20:13Z") }, 
+])
+
+db.sales.aggregate(
+    [
+        {
+            $group:
+            {
+                _id:"$item"
+            }
+        }
+    ]
+)
+
+{ "_id" : "abc" }
+{ "_id" : "xyz" }
+{ "_id" : "def" }
+{ "_id" : "jkl" }
+
+
+db.sales.aggregate(
+    [
+        {
+            $group:
+            {
+                _id:"$item",
+                totalQuantity:{$sum:"$quantity"}
+            }
+        }
+    ]
+)
+
+{ "_id" : "abc", "totalQuantity" : 17 }
+{ "_id" : "xyz", "totalQuantity" : 30 }
+{ "_id" : "def", "totalQuantity" : 15 }
+{ "_id" : "jkl", "totalQuantity" : 1 }
+
+db.sales.aggregate(
+    [
+        {
+            $group:
+            {
+                _id:"$item",
+                totalQuantity:{$sum:"$quantity"},
+                totalSaleAmount:{$sum:{$multiply:["$price","$quantity"]}}
+            }
+        }
+    ]
+)
+
+
+db.sales.aggregate(
+    [
+        {
+            $group:
+            {
+                _id:"$item",
+                totalQuantity:{$sum:"$quantity"},
+                totalSaleAmount:{$sum:{$multiply:["$price","$quantity"]}}
+            }
+        },
+        {
+            $match:{"totalSaleAmount":{$gte:100}}
+        },
+        {
+            $project:{totalQuantity:0}
+        },
+        {
+            $sort:{totalSaleAmount:1}
+        },
+        {
+            $skip:1
+        }
+    ]
+)
