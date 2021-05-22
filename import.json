@@ -1,0 +1,16 @@
+[
+    {
+            "id": "6360",
+            "name": "Gulab",
+            "city": "Delhi",
+            "locality": "Pitampura, New Delhi",
+            "aggregate_rating": 4.5
+    },
+    {
+        "id": "6360",
+        "name": "Gulab",
+        "city": "Delhi",
+        "locality": "Pitampura, New Delhi",
+        "aggregate_rating": 4.5
+    }
+]

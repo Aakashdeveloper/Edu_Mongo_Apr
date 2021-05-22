@@ -1,0 +1,14 @@
+mongoexport --db janlogin --collection users --type=csv --fields _id,name,password,email,role --out Downloads/test.csv
+
+mongoimport --db=edumay --collection=rest --file import.json
+
+mongodump Downloads/mydump
+
+mongodump -d test -c test1 -q='{"age":{"$gte":3}}'
+
+mongorestore dump/
+
+bsondump --outfile=classes.json classes.bson
+
+gridFs
+mongofiles -d testvideo put "link of file"
