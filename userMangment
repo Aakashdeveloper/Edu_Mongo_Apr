@@ -1,0 +1,56 @@
+> mongod --auth --dbpath data/db
+> mongo
+
+> show dbs
+> db.auth('user','pwd')
+> db.logout()
+
+>
+db.createUser(
+{
+	user: "edumay",
+	pwd: "edumay",
+	roles:[
+        {role: "readWrite" , db:"edumay"}
+	]
+})
+
+>https://docs.mongodb.com/manual/reference/built-in-roles/#database-user-roles
+
+> Authentication & Authorization
+> Transport Encryption
+> Encryption at Rest
+
+db.updateUser("edumay",
+    {
+        roles:[
+            {role: "userAdminAnyDatabase" , db:"admin"}
+        ]
+    }
+)
+
+///////
+> https://docs.mongodb.com/manual/appendix/security/appendixA-openssl-ca/
+ca.key
+ca.crt
+mongodb-test-ia.crt
+cat mongodb-test-ca.crt mongodb-test-ia.crt  > test-ca.pem
+
+
+sudo mongod --sslMode requireSSl --sslPEMKeyFile test.pem
+
+mongo --ssl --sslCAFile test.pem --host localhost
+
+//////
+db.createCollection("mytest", {capped:true, size:10000, max:3})
+
+const session = db.getMongo().startSession()
+session.startTransaction()
+const usersCol= session.getDatabase("janlogin").users 
+const mytestCol= session.getDatabase("janlogin").mytest 
+
+usersCol.find().pretty()
+usersCol.deleteOne()
+
+session.abortTransaction()
+session.commitTransaction()

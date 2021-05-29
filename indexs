@@ -19,6 +19,8 @@ db.emp.createIndex({"name":1},{unique:true, dropDups:true})
 
 db.emp.createIndex({"name":1,"email":1},{name:"myindex"})
 
+db.emp.createIndex({"room.name":1},{unique:true})
+
 [
 	{
 		"v" : 2,
